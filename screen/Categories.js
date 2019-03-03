@@ -29,17 +29,17 @@ export default class Categories extends React.Component {
     APIcall() {
         axios({
             method: 'get',
-            url: 'http://localhost:3000/categories',
+            url: 'http://demo2241206.mockable.io/categories',
             // data: null,
             // headers: {
             //     "X-Sapo-SessionId": "77f71b9c905ea73ddad74e511607321f"
             // },
-            params: {
-                query: this.state.text
-            }
+            // params: {
+            //     query: this.state.text
+            // }
         })
             .then(response => {
-                const categories = response.data;
+                const categories = response.data.categories;
                 this.setState({ categories });
                 console.log(categories);
                 
