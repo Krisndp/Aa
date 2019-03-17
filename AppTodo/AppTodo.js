@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Alert, FlatList, Image } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, Dimensions, Alert, FlatList, Image } from 'react-native';
 import FirebaseApp from '../firebase/firebase';
 import { TextInput } from 'react-native-gesture-handler';
 const database = FirebaseApp.database();
@@ -18,7 +18,7 @@ class TodoList extends React.Component {
                 </View>
                 <View style={{ flex: 0.2, flexDirection: 'row' }}>
                     <View style={{ flex: 0.5, justifyContent: 'center', alignItems: 'center' }}>
-                        <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={() => {}}>
+                        <TouchableOpacity style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} onPress={() => { Alert.alert(this.props.visible)}}>
                             <Image source={{ uri: "https://img.icons8.com/material-sharp/2x/edit.png" }} style={{ width: width / 20, height: width / 20 }} />
                         </TouchableOpacity>
                     </View>
@@ -33,18 +33,20 @@ class TodoList extends React.Component {
     }
 }
 
-class Modal extends React.Component {
+class EditView extends React.Component {
 
     render() {
-        <View style={{ flex: 1 }}>
-            <View>
-                <TextInput />
-            </View>
-            <View>
-                <TouchableOpacity>
-                    <Text></Text>
-                </TouchableOpacity>
-            </View>
+        <View style={{ justifyContent = 'center', alignItems = 'center', flex: 0.5, marginTop: width / 2, borderColor: 'black', borderWidth: 1 }}>
+            <Modal
+                animationType='slide'
+                transparent={false}
+                visible={this.props.visible}
+                onRequestClose={() => {
+                    Alert.alert('Modal has been closed!')
+                }}
+            >
+                <Text style={{ fontSize: 20, color: 'red' }}>Hello</Text>
+            </Modal>
         </View>
 
     }
@@ -56,6 +58,7 @@ export default class AppTodo extends React.Component {
         this.itemRef = database;
         this.state = {
             text: '',
+            visible: false,
         }
     }
 
@@ -82,21 +85,24 @@ export default class AppTodo extends React.Component {
                 console.log(item)
         })
     }
-    remove(x){
+    remove(x) {
         Alert.alert(
             'Delete it now.',
             'Are you sure?',
             [
-                { text:'OK', onPress: () => {[
-                    this.itemRef.ref('AppTodo/List').child(x).remove(),
-                    this.allItems(this.itemRef)
-                    ]}
+                {
+                    text: 'Yes', onPress: () => {
+                        [
+                            this.itemRef.ref('AppTodo/List').child(x).remove(),
+                            this.allItems(this.itemRef)
+                        ]
+                    }
                 },
-                { text: 'Cancel', onPress: () => {}}
+                { text: 'Cancel', onPress: () => { } }
 
             ]
         )
-       
+
     }
 
     render() {
@@ -118,7 +124,7 @@ export default class AppTodo extends React.Component {
                 <View style={{ flex: 0.8 }}>
                     <FlatList
                         data={this.state.item}
-                        renderItem={({ item }) => <TodoList remove = {() => this.remove(item.key)} item={item} />}
+                        renderItem={({ item }) => <TodoList remove={() => this.remove(item.key)} visible = {this.state.visible} item={item} />}
                         keyExtractor={(item) => item.key}
                     />
                 </View>
